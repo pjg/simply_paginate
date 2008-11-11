@@ -1,0 +1,62 @@
+SimplyPaginate
+==============
+
+SimplyPaginate is a Rails plugin for pagination. Loosely based on Mislav Marohnić
+and PJ Hyett's work on will_paginate (http://github.com/mislav/will_paginate).
+
+It is a very trimmed down version of will_paginate plus a few additions to suit my needs.
+
+
+Example usage
+=============
+
+config/routes.rb
+  map.comments_pages '/comments/page/:page', :controller => 'comments', :page => /[\d]{1,}/
+
+
+app/controllers/comments_controller.rb
+  def index
+    @comments = Comment.paginate(:per_page => 50,
+                                 :page => params[:page],
+                                 :include => {:document},
+                                 :conditions => {:is_hidden => false)},
+                                 :order => 'comments.created_on DESC')
+  end
+
+
+app/views/comments/index.html.erb
+  <%= pagination_for @comments %>
+
+
+Will render pagination links Flickr style:
+  [« Previous page][1][2][3]...[154][Next page »]
+
+
+To display the pagination summary:
+
+app/views/comments/index.html.erb
+  <p>Total: <%= @comments.total_entries %> comments. Showing: <%= @comments.current_results_first %> - <%= @comments.current_results_last %>.</p>
+
+
+To customize the 'previous page' and 'next page' labels:
+
+config/initializers/simply_paginate.rb
+  SimplyPaginate::ViewHelpers.pagination_options[:previous_label] = 'Previous'
+  SimplyPaginate::ViewHelpers.pagination_options[:next_label] = 'Next'
+
+
+Integration with act_as_ferret full text search:
+
+app/controllers/search_controller.rb
+  def index
+    @query = params[:query]
+    page = params[:page].blank? ? 1 : params[:page]
+    @results = SimplyPaginate::Collection.create(page, 10) do |pager|
+      pager.total_entries, results = Document.full_text_search(@query, :page => page)
+      pager.replace results
+    end
+  end
+
+
+
+Copyright (c) 2008 Paweł Gościcki, released under the MIT license
