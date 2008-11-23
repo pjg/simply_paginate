@@ -7,6 +7,13 @@ and PJ Hyett's work on will_paginate (http://github.com/mislav/will_paginate).
 It is a very trimmed down version of will_paginate plus a few additions to suit my needs.
 
 
+Installation
+============
+
+git submodule add git://github.com/pjg/simply_paginate.git vendor/plugins/simply_paginate
+git commit -m "Added simply_paginate plugin as a submodule."
+
+
 Example usage
 =============
 
