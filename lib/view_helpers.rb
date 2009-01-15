@@ -14,7 +14,7 @@ module SimplyPaginate
       :param_name     => :page
     }
 
-    mattr_reader :pagination_options
+    mattr_accessor :pagination_options
 
     # Renders pagination for a SimplyPaginate::Collection object
     def pagination_for(collection, options = {})
