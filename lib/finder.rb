@@ -24,10 +24,14 @@ module SimplyPaginate
 
         # paginating finder
         SimplyPaginate::Collection.create(page, per_page, total_entries) do |pager|
-          pager.replace find(:all, :select => options[:select],
-                             :joins => options[:joins], :include => options[:include],
-                             :conditions => options[:conditions], :order => options[:order],
-                             :offset => pager.offset, :limit => per_page)
+          pager.replace find(:all,
+                             :select => options[:select],
+                             :joins => options[:joins],
+                             :include => options[:include],
+                             :conditions => options[:conditions],
+                             :order => options[:order],
+                             :offset => pager.offset,
+                             :limit => per_page)
         end
       end
     end

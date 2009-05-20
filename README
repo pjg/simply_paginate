@@ -7,11 +7,24 @@ and PJ Hyett's work on will_paginate (http://github.com/mislav/will_paginate).
 It is a very trimmed down version of will_paginate plus a few additions to suit my needs.
 
 
+
+Requirements
+============
+
+Rails version 2.2.2
+
+Gem dependencies:
+  redgreen (for testing) [OPTIONAL]
+  sqlite3-ruby (for testing)
+
+
+
 Installation
 ============
 
 git submodule add git://github.com/pjg/simply_paginate.git vendor/plugins/simply_paginate
 git commit -m "Added simply_paginate plugin as a submodule."
+
 
 
 Example usage
@@ -27,7 +40,7 @@ app/controllers/comments_controller.rb
                                  :page => params[:page],
                                  :include => {:document},
                                  :conditions => {:is_hidden => false)},
-                                 :order => 'comments.created_on DESC')
+                                 :order => 'comments.id DESC')
   end
 
 
@@ -65,5 +78,66 @@ app/controllers/search_controller.rb
   end
 
 
+It does work correctly with named scopes, for example the following will yield expected results:
 
-Copyright (c) 2008 Paweł Gościcki, released under the MIT license
+  Comment.visible.ordered.paginate(:page => 2, :per_page => 5)
+
+
+It also works with Arrays:
+
+  [1, 2, 3, 4 ,5].paginate(:page => 2, :per_page => 2)
+  => [3, 4]
+
+
+
+CAVEATS
+=======
+
+Unfortunately, there are some. Comment.all returns an array (instead of ActiveRecord::NamedScope::Scope), so doing one of the following:
+
+  Comment.all.paginate(:per_page => 2)
+  Comment.find(:all.paginate(:per_page => 2)
+  >> Comment Load (26.5ms)   SELECT * FROM `comments`
+
+is highly inefficient as it will first fetch all recrods from the database and only then paginate the returned Array. Use this instead:
+
+  Comment.paginate(:per_page => 2)
+  >> SQL (0.1ms)   SELECT count(*) AS count_all FROM `comments`
+  >> Comment Load (0.3ms)   SELECT * FROM `comments` LIMIT 0, 2
+
+
+I don't recommend using it with named scopes which use the :include parameter. For example, given:
+
+  model Comment
+    named_scope :with_document, :include => :document
+  end
+
+Don't do the following (as it will generate an ugly and very resource hungry count query):
+
+  Comment.with_document.paginate(:page => params[:page], :per_page => 50)
+  >> SQL (85.7ms)   SELECT count(DISTINCT `comments`.id) AS count_all FROM `comments` LEFT OUTER JOIN `documents` ON `documents`.id = `comments`.document_id
+  >> Comment Load (0.1ms)   SELECT * FROM `comments` LIMIT 0, 50
+  ...
+
+Instead do it old school:
+
+   Comment.paginate(:include => :document, :page => params[:page], :per_page => 50)
+   >> SQL (0.2ms)   SELECT count(*) AS count_all FROM `comments`
+   >> Comment Load (0.1ms)   SELECT * FROM `comments` LIMIT 0, 50
+   ...
+
+The difference in performance is striking (in part it is due to the fact, that MySQL keeps table count at hand).
+
+
+
+TESTING
+=======
+
+If you'd like to run tests, you must have sqlite3 installed:
+
+  aptitude install sqlite3 libsqlite3-dev
+  gem install sqlite3-ruby
+
+
+
+Copyright (c) 2008-2009 Paweł Gościcki, released under the MIT license
