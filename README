@@ -93,7 +93,7 @@ It also works with Arrays:
 CAVEATS
 =======
 
-Unfortunately, there are same. Comment.all returns an array (instead of ActiveRecord::NamedScope::Scope), so doing one of the following:
+Unfortunately, there are some. Comment.all returns an array (instead of ActiveRecord::NamedScope::Scope), so doing one of the following:
 
   Comment.all.paginate(:per_page => 2)
   Comment.find(:all.paginate(:per_page => 2)
