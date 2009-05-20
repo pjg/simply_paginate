@@ -8,6 +8,17 @@ It is a very trimmed down version of will_paginate plus a few additions to suit 
 
 
 
+Requirements
+============
+
+Rails version 2.2.2
+
+Gem dependencies:
+  redgreen (for testing) [OPTIONAL]
+  sqlite3-ruby (for testing)
+
+
+
 Example usage
 =============
 
@@ -108,6 +119,16 @@ Instead do it old school:
    ...
 
 The difference in performance is striking (in part it is due to the fact, that MySQL keeps table count at hand).
+
+
+
+TESTING
+=======
+
+If you'd like to run tests, you must have sqlite3 installed:
+
+  aptitude install sqlite3 libsqlite3-dev
+  gem install sqlite3-ruby
 
 
 
