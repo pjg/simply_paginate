@@ -1,9 +1,6 @@
 ENV['RAILS_ENV'] = 'test'
 ENV['RAILS_ROOT'] ||= File.dirname(__FILE__) + '/../../../..'
 
-require 'test/unit'
-require 'rubygems'
-
 # Optional gems
 begin
   require 'redgreen'
@@ -39,14 +36,15 @@ load(File.dirname(__FILE__) + '/db/schema.rb')
 require File.dirname(__FILE__) + '/../init.rb'
 
 # Setup fixtures
-require 'active_support/test_case'
 require 'active_record/fixtures'
 
-# Load the plugin's fixtures
-Test::Unit::TestCase.fixture_path = File.dirname(__FILE__) + "/fixtures"
+class ActiveSupport::TestCase
+  include ActiveRecord::TestFixtures
 
-class Test::Unit::TestCase
-  self.use_transactional_fixtures = true
+  self.fixture_path = File.dirname(__FILE__) + "/fixtures"
+
+  self.use_transactional_fixtures = false
   self.use_instantiated_fixtures  = true
+
   fixtures :all
 end
