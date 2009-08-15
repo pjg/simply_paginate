@@ -11,7 +11,7 @@ It is a very trimmed down version of will_paginate plus a few additions to suit 
 Requirements
 ============
 
-Rails version 2.2.2
+Rails version 2.3+
 
 Gem dependencies:
   redgreen (for testing) [OPTIONAL]
@@ -96,7 +96,7 @@ CAVEATS
 Unfortunately, there are some. Comment.all returns an array (instead of ActiveRecord::NamedScope::Scope), so doing one of the following:
 
   Comment.all.paginate(:per_page => 2)
-  Comment.find(:all.paginate(:per_page => 2)
+  Comment.find(:all).paginate(:per_page => 2)
   >> Comment Load (26.5ms)   SELECT * FROM `comments`
 
 is highly inefficient as it will first fetch all recrods from the database and only then paginate the returned Array. Use this instead:

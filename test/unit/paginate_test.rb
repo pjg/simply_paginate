@@ -1,8 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
-
 require File.dirname(__FILE__) + '/../fixtures/rectangle_model.rb'
 
-class PaginateTest < Test::Unit::TestCase
+class PaginateTest < ActiveSupport::TestCase
 
   def test_array_pagination
     numbers = [1, 2, 3, 4, 5]
