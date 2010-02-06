@@ -39,7 +39,7 @@ app/controllers/comments_controller.rb
     @comments = Comment.paginate(:per_page => 50,
                                  :page => params[:page],
                                  :include => {:document},
-                                 :conditions => {:is_hidden => false)},
+                                 :conditions => {:is_hidden => false},
                                  :order => 'comments.id DESC')
   end
 
