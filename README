@@ -23,7 +23,7 @@ Installation
 ============
 
 git submodule add git://github.com/pjg/simply_paginate.git vendor/plugins/simply_paginate
-git commit -m "Added simply_paginate plugin as a submodule."
+git commit -m "Add simply_paginate plugin as a submodule"
 
 
 
