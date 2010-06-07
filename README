@@ -11,11 +11,11 @@ It is a very trimmed down version of will_paginate plus a few additions to suit 
 Requirements
 ============
 
-Rails version 2.3+
+Rails version 2.3.x
 
 Gem dependencies:
   redgreen (for testing) [OPTIONAL]
-  sqlite3-ruby (for testing)
+  sqlite3-ruby (for testing) [OPTIONAL]
 
 
 
@@ -38,7 +38,7 @@ app/controllers/comments_controller.rb
   def index
     @comments = Comment.paginate(:per_page => 50,
                                  :page => params[:page],
-                                 :include => {:document},
+                                 :include => [:document],
                                  :conditions => {:is_hidden => false},
                                  :order => 'comments.id DESC')
   end
@@ -65,7 +65,7 @@ config/initializers/simply_paginate.rb
   SimplyPaginate::ViewHelpers.pagination_options[:next_label] = 'Next'
 
 
-Integration with act_as_ferret full text search:
+Integration with the act_as_ferret full text search:
 
 app/controllers/search_controller.rb
   def index
@@ -78,7 +78,7 @@ app/controllers/search_controller.rb
   end
 
 
-It does work correctly with named scopes, for example the following will yield expected results:
+It does work correctly with named scopes, for example the following will yield the expected results:
 
   Comment.visible.ordered.paginate(:page => 2, :per_page => 5)
 
@@ -99,7 +99,7 @@ Unfortunately, there are some. Comment.all returns an array (instead of ActiveRe
   Comment.find(:all).paginate(:per_page => 2)
   >> Comment Load (26.5ms)   SELECT * FROM `comments`
 
-is highly inefficient as it will first fetch all recrods from the database and only then paginate the returned Array. Use this instead:
+is highly inefficient as it will first fetch all records from the database and only then paginate the returned Array. Use this instead:
 
   Comment.paginate(:per_page => 2)
   >> SQL (0.1ms)   SELECT count(*) AS count_all FROM `comments`
@@ -126,18 +126,18 @@ Instead do it old school:
    >> Comment Load (0.1ms)   SELECT * FROM `comments` LIMIT 0, 50
    ...
 
-The difference in performance is striking (in part it is due to the fact, that MySQL keeps table count at hand).
+The difference in performance is striking (in part it is due to the fact, that MySQL keeps the table count at hand).
 
 
 
 TESTING
 =======
 
-If you'd like to run tests, you must have sqlite3 installed:
+If you'd like to run tests, you must have the sqlite3 installed (both application and gem):
 
   aptitude install sqlite3 libsqlite3-dev
   gem install sqlite3-ruby
 
 
 
-Copyright (c) 2008-2009 Paweł Gościcki, released under the MIT license
+Copyright (c) 2008-2010 Paweł Gościcki, released under the MIT license
